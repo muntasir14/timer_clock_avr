@@ -45,19 +45,23 @@ int main(void)
 	
     while (1) 
     {
-		// write input pin conditions
 		handle_input_buttons();
 		update_display();
 		handle_status();
     }
 }
 
-void handle_status() {
-	if(timer_flag == 2) {
-		PORTD |= (1 << PD2);
-		start_timer2(TIMER2_PRESCALER_None);
+void timer2_comp() {
+	if(sec != 0) {
+		if(msc == 0) {
+			sec--;
+			msc = 999;
+		} else			msc--;
+		} else {
+		if(msc == 0) {
+			timer_flag = 2;
+		} else			msc --;
 	}
-	else						PORTD &= ~(1 << PD2);
 }
 
 void handle_input_buttons() {
@@ -95,15 +99,13 @@ void update_display() {
 	LCDWriteStringXY(10, 1, str);
 }
 
-void timer2_comp() {
-	if(sec != 0) {
-		if(msc == 0) {
-			sec--;
-			msc = 999;
-		} else			msc--;
-	} else {
-		if(msc == 0) {
-			timer_flag = 2;
-		} else			msc --;
+
+
+void handle_status() {
+	if(timer_flag == 2) {
+		PORTD |= (1 << PD2);
+		start_timer2(TIMER2_PRESCALER_None);
+		} else {
+		PORTD &= ~(1 << PD2);
 	}
 }
